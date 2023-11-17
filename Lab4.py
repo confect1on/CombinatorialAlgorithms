@@ -46,3 +46,6 @@ def test():
         (6, 10, 11)
     ]
     print(*alg_Kraskala_connectivity_graph(rice_plant, 11))
+
+
+test()
