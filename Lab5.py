@@ -5,10 +5,20 @@ class Dijkstra:
         self.graph = [[0 for _ in range(vertices)]
                       for _ in range(vertices)]
 
-    def print_solution(self, dist):
+    def print_solution(self, dist, h):
         print("Vertex \t Distance from Source")
         for node in range(self.V):
             print(node, "\t\t", dist[node])
+        start_vertex = 1
+        end_vertex = self.V - 1
+        result = ""
+        while end_vertex != start_vertex:
+            result += str(end_vertex)
+            result += " "
+            end_vertex = h[end_vertex]
+        result += "1"
+        print("From 1 to " + str(self.V - 1))
+        print(result)
 
     def min_distance(self, dist, sptSet):
         min_index = 0
@@ -26,6 +36,7 @@ class Dijkstra:
         dist = [1e7] * self.V
         dist[src] = 0
         sptSet = [False] * self.V
+        h = [0] * self.V
 
         for cout in range(self.V):
 
@@ -38,8 +49,9 @@ class Dijkstra:
                         not sptSet[v] and
                         dist[v] > dist[u] + self.graph[u][v]):
                     dist[v] = dist[u] + self.graph[u][v]
+                    h[v] = u
 
-        self.print_solution(dist)
+        self.print_solution(dist, h)
 
 
 class Floyd:
@@ -54,15 +66,18 @@ class Floyd:
 
     def floydWarshall(self):
         dist = list(map(lambda i: list(map(lambda j: j, i)), self.graph))
+        h = [[i for i in range(self.V)] for _ in range(self.V)]
         for k in range(self.V):
             for i in range(self.V):
                 for j in range(self.V):
-                    dist[i][j] = min(dist[i][j],
-                                     dist[i][k] + dist[k][j]
-                                     )
-        self.printSolution(dist)
+                    if dist[i][j] > dist[i][k] + dist[k][j]:
 
-    def printSolution(self, dist):
+                        dist[i][j] = dist[i][k] + dist[k][j]
+                        h[i][j] = h[i][k]
+
+        self.printSolution(dist, h)
+
+    def printSolution(self, dist, h):
         print("Following matrix shows the shortest distances between every pair of vertices")
         for i in range(self.V):
             for j in range(self.V):
@@ -72,6 +87,18 @@ class Floyd:
                     print("%7d" % (dist[i][j]), end=' ')
                 if j == self.V - 1:
                     print()
+        start = 1
+        end = 2
+        print("From 1 to", end)
+        if dist[start][end] != self.INF:
+            result = ""
+            while end != start:
+                result += str(start) + " "
+                start = h[start][end]
+            result += str(end)
+            print(result)
+        else:
+            print("Missing")
 
 
 Floyd().floydWarshall()
